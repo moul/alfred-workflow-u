@@ -1,18 +1,16 @@
+GOBINS = .
 GOPKG ?=	moul.io/alfred-workflow-u
-DOCKER_IMAGE ?=	moul/alfred-workflow-u
-GOBINS ?=	.
-NPM_PACKAGES ?=	.
+VERSION ?= `git describe --tags --always`
 
 include rules.mk
 
-generate: install
-	GO111MODULE=off go get github.com/campoy/embedmd
-	mkdir -p .tmp
-	echo 'foo@bar:~$$ alfred-workflow-u hello world' > .tmp/usage.txt
-	alfred-workflow-u hello world 2>&1 >> .tmp/usage.txt
-	embedmd -w README.md
-	rm -rf .tmp
-.PHONY: generate
+bundle:
+	go build -o ./workflow/alfred-workflow-u .
+	GOARCH=amd64 GOOS=darwin go build -ldflags "-s -w" -o "./workflow/alfred-workflow-u"; \
+	VERSION=v$(VERSION) envsubst > ./workflow/info.plist < ./workflow/info.plist.template;
+	cd workflow && zip -r "./alfred-workflow-u.zip" ./*
+	cd workflow && zip -d "./alfred-workflow-u.zip" ./info.plist.template
+		mv "workflow/alfred-workflow-u.zip" "./alfred-workflow-u-v$(VERSION).alfredworkflow"
 
 lint:
 	cd tool/lint; make

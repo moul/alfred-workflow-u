@@ -86,14 +86,14 @@ go.install:
 ifeq ($(CI),true)
 	@rm -f /tmp/goinstall.log
 	@set -e; for dir in $(GOBINS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO) install -v $(GO_INSTALL_OPTS) .; \
+		cd $$dir; \
+		$(GO) install -v $(GO_INSTALL_OPTS) .; \
 	); done 2>&1 | tee $(GOINSTALLLOG_FILE)
 
 else
 	@set -e; for dir in $(GOBINS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO) install $(GO_INSTALL_OPTS) .; \
+		cd $$dir; \
+		$(GO) install $(GO_INSTALL_OPTS) .; \
 	); done
 endif
 INSTALL_STEPS += go.install
@@ -103,7 +103,7 @@ go.release:
 	$(call check-program, goreleaser)
 	goreleaser --snapshot --skip-publish --rm-dist
 	@echo -n "Do you want to release? [y/N] " && read ans && \
-	  if [ $${ans:-N} = y ]; then set -xe; goreleaser --rm-dist; fi
+		if [ $${ans:-N} = y ]; then set -xe; goreleaser --rm-dist; fi
 RELEASE_STEPS += go.release
 endif
 
@@ -113,24 +113,24 @@ ifeq ($(CI),true)
 	@echo "mode: atomic" > /tmp/gocoverage
 	@rm -f $(GOTESTJSON_FILE)
 	@set -e; for dir in $(GOMOD_DIRS); do (set -e; (set -euf pipefail; \
-	    cd $$dir; \
-	    (($(GO) test ./... $(GO_TEST_OPTS) -cover -coverprofile=/tmp/profile.out -covermode=atomic -race -json && touch $@.ok) | tee -a $(GOTESTJSON_FILE) 3>&1 1>&2 2>&3 | tee -a $(GOBUILDLOG_FILE); \
-	  ); \
-	  rm $@.ok 2>/dev/null || exit 1; \
-	  if [ -f /tmp/profile.out ]; then \
-	    cat /tmp/profile.out | sed "/mode: atomic/d" >> /tmp/gocoverage; \
-	    rm -f /tmp/profile.out; \
-	  fi)); done
+			cd $$dir; \
+			(($(GO) test ./... $(GO_TEST_OPTS) -cover -coverprofile=/tmp/profile.out -covermode=atomic -race -json && touch $@.ok) | tee -a $(GOTESTJSON_FILE) 3>&1 1>&2 2>&3 | tee -a $(GOBUILDLOG_FILE); \
+		); \
+		rm $@.ok 2>/dev/null || exit 1; \
+		if [ -f /tmp/profile.out ]; then \
+			cat /tmp/profile.out | sed "/mode: atomic/d" >> /tmp/gocoverage; \
+			rm -f /tmp/profile.out; \
+		fi)); done
 	@mv /tmp/gocoverage $(GOCOVERAGE_FILE)
 else
 	@echo "mode: atomic" > /tmp/gocoverage
 	@set -e; for dir in $(GOMOD_DIRS); do (set -e; (set -xe; \
-	  cd $$dir; \
-	  $(GO) test ./... $(GO_TEST_OPTS) -cover -coverprofile=/tmp/profile.out -covermode=atomic -race); \
-	  if [ -f /tmp/profile.out ]; then \
-	    cat /tmp/profile.out | sed "/mode: atomic/d" >> /tmp/gocoverage; \
-	    rm -f /tmp/profile.out; \
-	  fi); done
+		cd $$dir; \
+		$(GO) test ./... $(GO_TEST_OPTS) -cover -coverprofile=/tmp/profile.out -covermode=atomic -race); \
+		if [ -f /tmp/profile.out ]; then \
+			cat /tmp/profile.out | sed "/mode: atomic/d" >> /tmp/gocoverage; \
+			rm -f /tmp/profile.out; \
+		fi); done
 	@mv /tmp/gocoverage $(GOCOVERAGE_FILE)
 endif
 
@@ -145,59 +145,59 @@ go.coverfunc: go.unittest
 .PHONY: go.lint
 go.lint:
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  golangci-lint run --verbose ./...; \
+		cd $$dir; \
+		golangci-lint run --verbose ./...; \
 	); done
 
 .PHONY: go.tidy
 go.tidy:
 	@# tidy dirs with go.mod files
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO)	mod tidy; \
+		cd $$dir; \
+		$(GO)	mod tidy; \
 	); done
 
 .PHONY: go.depaware-update
 go.depaware-update: go.tidy
 	@# gen depaware for bins
 	@set -e; for dir in $(GOBINS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO) run github.com/tailscale/depaware --update .; \
+		cd $$dir; \
+		$(GO) run github.com/tailscale/depaware --update .; \
 	); done
 	@# tidy unused depaware deps if not in a tools_test.go file
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO)	mod tidy; \
+		cd $$dir; \
+		$(GO)	mod tidy; \
 	); done
 
 .PHONY: go.depaware-check
 go.depaware-check: go.tidy
 	@# gen depaware for bins
 	@set -e; for dir in $(GOBINS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO) run github.com/tailscale/depaware --check .; \
+		cd $$dir; \
+		$(GO) run github.com/tailscale/depaware --check .; \
 	); done
 
 
 .PHONY: go.build
 go.build:
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO)	build ./...; \
+		cd $$dir; \
+		$(GO)	build ./...; \
 	); done
 
 .PHONY: go.bump-deps
 go.bumpdeps:
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO)	get -u ./...; \
+		cd $$dir; \
+		$(GO)	get -u ./...; \
 	); done
 
 .PHONY: go.bump-deps
 go.fmt:
 	@set -e; for dir in $(GOMOD_DIRS); do ( set -xe; \
-	  cd $$dir; \
-	  $(GO) run golang.org/x/tools/cmd/goimports -w `go list -f '{{.Dir}}' ./...` \
+		cd $$dir; \
+		$(GO) run golang.org/x/tools/cmd/goimports -w `go list -f '{{.Dir}}' ./...` \
 	); done
 
 VERIFY_STEPS += go.depaware-check
@@ -242,10 +242,10 @@ ifdef NPM_PACKAGES
 npm.publish:
 	@echo -n "Do you want to npm publish? [y/N] " && read ans && \
 	@if [ $${ans:-N} = y ]; then \
-	  set -e; for dir in $(NPM_PACKAGES); do ( set -xe; \
-	    cd $$dir; \
-	    npm publish --access=public; \
-	  ); done; \
+		set -e; for dir in $(NPM_PACKAGES); do ( set -xe; \
+			cd $$dir; \
+			npm publish --access=public; \
+		); done; \
 	fi
 RELEASE_STEPS += npm.publish
 endif
@@ -254,11 +254,11 @@ endif
 ## Docker
 ##
 
-docker_build = 	docker build \
-	  --build-arg VCS_REF=`git rev-parse --short HEAD` \
-	  --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
-	  --build-arg VERSION=`git describe --tags --always` \
-	  -t "$2" -f "$1" "$(dir $1)"
+docker_build =	docker build \
+		--build-arg VCS_REF=`git rev-parse --short HEAD` \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		--build-arg VERSION=`git describe --tags --always` \
+		-t "$2" -f "$1" "$(dir $1)"
 
 ifndef DOCKERFILE_PATH
 DOCKERFILE_PATH = ./Dockerfile

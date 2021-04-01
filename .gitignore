@@ -32,3 +32,8 @@ gin-bin
 
 # IDE settings
 .idea
+
+workflow/alfred-workflow-u
+*.alfredworkflow
+*.zip
+workflow/info.plist
