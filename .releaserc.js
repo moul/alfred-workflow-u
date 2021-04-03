@@ -1,5 +1,5 @@
-module.exports = {
-    branch: 'master',
+ymodule.exports = {
+    branch: 'main',
     plugins: [
         '@semantic-release/commit-analyzer',
         '@semantic-release/release-notes-generator',
