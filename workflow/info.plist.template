@@ -46,7 +46,7 @@
         <key>runningsubtext</key>
         <string>wait...</string>
         <key>script</key>
-        <string>alfred-workflow-u "$1"</string>
+        <string>./alfred-workflow-u "$1"</string>
         <key>scriptargtype</key>
         <integer>1</integer>
         <key>scriptfile</key>
