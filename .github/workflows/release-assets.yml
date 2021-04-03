@@ -4,6 +4,7 @@ on:
     types:
       - created
       - published
+      - released
 
 jobs:
   release:
@@ -21,13 +22,11 @@ jobs:
         run: git fetch --prune --unshallow
       -
         name: Set up Go
-        if: steps.semantic.outputs.new-release-published == 'true'
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.golang }}
       -
         name: Cache Go modules
-        if: steps.semantic.outputs.new-release-published == 'true'
         uses: actions/cache@v2.1.4
         with:
           path: ~/go/pkg/mod
@@ -39,7 +38,6 @@ jobs:
           make bundle
       -
         name: Upload release asset
-        if: steps.semantic.outputs.new-release-published == 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
