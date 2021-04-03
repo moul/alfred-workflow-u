@@ -39,6 +39,21 @@ jobs:
           key:          ${{ runner.os }}-go-${{ matrix.golang }}-v1-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-${{ matrix.golang }}-v1-
       -
+        name: Bundle
+        run:
+          make bundle
+      -
+        name: Upload release asset
+        if: steps.semantic.outputs.new-release-published == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{github.workspace}}/alfred-workflow-u.alfredworkflow
+          asset_name: alfred-workflow-u.alfredworkflow
+          asset_content_type: application/zip
+      -
         name: Register version on pkg.go.dev
         if: steps.semantic.outputs.new-release-published == 'true'
         run: |
