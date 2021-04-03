@@ -1,0 +1,11 @@
+# .goreleaser.yml
+builds:
+  - skip: true
+
+release:
+  extra_files:
+    - glob: ./*.alfredworkflow
+  #draft: true
+
+changelog:
+  skip: false
