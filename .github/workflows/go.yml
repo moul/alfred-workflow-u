@@ -26,31 +26,6 @@ on:
       - ".github/workflows/go.yml"
 
 jobs:
-  goreleaser-dryrun:
-    strategy:
-      matrix:
-        golang: [1.16.x]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.golang }}
-      - name: Cache Go modules
-        uses: actions/cache@v2.1.4
-        with:
-          path: ~/go/pkg/mod
-          key:          ${{ runner.os }}-go-${{ matrix.golang }}-v1-${{ hashFiles('**/go.sum') }}
-          restore-keys: ${{ runner.os }}-go-${{ matrix.golang }}-v1-
-      - name: Run GoReleaser (Dry Run)
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          args: release --rm-dist --snapshot --skip-publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   golangci-lint:
     runs-on: ubuntu-latest
     strategy:
