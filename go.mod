@@ -9,6 +9,5 @@ require (
 	go.uber.org/goleak v1.1.10
 	go.uber.org/zap v1.16.0
 	moul.io/srand v1.6.1
-	moul.io/u v1.20.0 // indirect
-	moul.io/zapconfig v1.3.0
+	moul.io/zapconfig v1.4.0
 )
